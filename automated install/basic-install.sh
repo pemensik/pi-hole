@@ -2229,7 +2229,7 @@ FTLinstall() {
     printf "  %b %s..." "${INFO}" "${str}"
 
     # Find the latest version tag for FTL
-    latesttag=$(curl -sI https://github.com/pi-hole/FTL/releases/latest | grep "Location" | awk -F '/' '{print $NF}')
+    latesttag=$(curl -sI https://github.com/pi-hole/FTL/releases/latest | grep --color=never "Location" | awk -F '/' '{print $NF}' | tr -d '[:cntrl:]')
     # Tags should always start with v, check for that.
     if [[ ! "${latesttag}" == v* ]]; then
         printf "%b  %b %s\\n" "${OVER}" "${CROSS}" "${str}"

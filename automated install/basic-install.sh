@@ -2233,7 +2233,7 @@ FTLinstall() {
     # Tags should always start with v, check for that.
     if [[ ! "${latesttag}" == v* ]]; then
         printf "%b  %b %s\\n" "${OVER}" "${CROSS}" "${str}"
-        printf "  %bError: Unable to get latest release location from GitHub%b\\n" "${COL_LIGHT_RED}" "${COL_NC}"
+        printf "  %bError: Unable to get latest release location from GitHub for %s%b\\n" "${COL_LIGHT_RED}" "${latesttag}" "${COL_NC}"
         return 1
     fi
 

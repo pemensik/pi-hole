@@ -398,22 +398,38 @@ SetWebUILayout() {
     change_setting "WEBUIBOXEDLAYOUT" "${args[2]}"
 }
 
+CheckUrl(){
+    local regex
+    # Check for characters NOT allowed in URLs
+    regex="[^a-zA-Z0-9:/?&=~._-]"
+    if [[ "${1}" =~ ${regex} ]]; then
+        return 1
+    else
+        return 0
+    fi
+}
+
 CustomizeAdLists() {
     list="/etc/pihole/adlists.list"
 
-    if [[ "${args[2]}" == "enable" ]]; then
-        sed -i "\\@${args[3]}@s/^#http/http/g" "${list}"
-    elif [[ "${args[2]}" == "disable" ]]; then
-        sed -i "\\@${args[3]}@s/^http/#http/g" "${list}"
-    elif [[ "${args[2]}" == "add" ]]; then
-        if [[ $(grep -c "^${args[3]}$" "${list}") -eq 0 ]] ; then
-            echo "${args[3]}" >> ${list}
+    if CheckUrl "${args[3]}"; then
+        if [[ "${args[2]}" == "enable" ]]; then
+            sed -i "\\@${args[3]}@s/^#http/http/g" "${list}"
+        elif [[ "${args[2]}" == "disable" ]]; then
+            sed -i "\\@${args[3]}@s/^http/#http/g" "${list}"
+        elif [[ "${args[2]}" == "add" ]]; then
+            if [[ $(grep -c "^${args[3]}$" "${list}") -eq 0 ]] ; then
+                echo "${args[3]}" >> ${list}
+            fi
+        elif [[ "${args[2]}" == "del" ]]; then
+            var=$(echo "${args[3]}" | sed 's/\//\\\//g')
+            sed -i "/${var}/Id" "${list}"
+        else
+            echo "Not permitted"
+            return 1
         fi
-    elif [[ "${args[2]}" == "del" ]]; then
-        var=$(echo "${args[3]}" | sed 's/\//\\\//g')
-        sed -i "/${var}/Id" "${list}"
     else
-        echo "Not permitted"
+        echo "Invalid Url"
         return 1
     fi
 }
